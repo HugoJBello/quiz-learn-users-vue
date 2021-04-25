@@ -20,37 +20,19 @@
       </v-card-text>
     </v-card>
 
-    <v-card
-        class="mx-auto lesson"
-        max-width="444"
-        v-for="(question, questionIndex) in quiz.questions"
-        :key="question.questionText + questionIndex"
-        outlined
+    <div           v-for="(question, questionIndex) in quiz.questions"
+                   :key="question.questionText + questionIndex"
+
     >
-      <v-list-item          three-line>
-        <v-list-item-content>
-          <v-list-item-title class="headline mb-1">
-            {{ question.questionText }}
-          </v-list-item-title>
-          <div class="answer" v-for="(answer, answerIndex) in question.answerOptions"
-                                :key="answer+ answerIndex">
-            <input type="checkbox" :checked="isChecked(quizUserSolution,  questionIndex, answerIndex)" @change="check(questionIndex, answerIndex)"/> {{answer}}
-          </div>
-        </v-list-item-content>
+      <QuestionCard
+          :questionIndex="questionIndex"
+          :question="question"
+          :quiz="quiz"
+          :quizUserSolution="quizUserSolution"
+      >
+      </QuestionCard>
+    </div>
 
-        <v-list-item-avatar
-            tile
-            size="120"
-            color="grey"
-            v-if="quiz.imageUrl"
-        >
-          <v-img
-
-              :src="quiz.imageUrl"
-          ></v-img>
-        </v-list-item-avatar>
-      </v-list-item>
-    </v-card>
   </v-container>
 </template>
 
@@ -60,9 +42,10 @@ import {getQuiz, getUserSolutions, saveUserSolutions} from "@/services/dbService
 import {Quiz} from "@/models/Quiz";
 import {ChosenAnswerMultichoice, QuizUserSolution} from "@/models/QuizUserSolution";
 import {v4 as uuidv4} from "uuid";
+import QuestionCard from "@/components/QuestionCard.vue";
 
 @Component({
-  components: {},
+  components: {QuestionCard},
 })
 export default class QuizEntry extends Vue {
   public quiz: Quiz | undefined
@@ -76,7 +59,9 @@ export default class QuizEntry extends Vue {
     if (this.user.uid) {
       const prevSol = await getUserSolutions(quizId, this.user.uid) as QuizUserSolution
       if (prevSol) {
-        this.quizUserSolution = prevSol
+        this.quizUserSolution = Object.assign({}, prevSol)
+        console.log(this.quizUserSolution,this.quizUserSolution.userAnswers)
+
       } else {
         const answers = [] as ChosenAnswerMultichoice[]
         this.quizUserSolution.userAnswers = answers
@@ -85,44 +70,6 @@ export default class QuizEntry extends Vue {
         this.quizUserSolution.quizId = quizId
         this.quizUserSolution.id = uuidv4()
       }
-    }
-  }
-  async saveUserSolutionDb(){
-    console.log(this.quizUserSolution)
-    await saveUserSolutions(this.quizUserSolution)
-  }
-
-  isChecked = (quizUserSolution: QuizUserSolution, questionIndex: number, answerIndex: number): boolean => {
-    if (quizUserSolution && quizUserSolution.userAnswers) {
-      const answer = quizUserSolution.userAnswers.find((answ) => answ.questionIndex == questionIndex) as ChosenAnswerMultichoice
-      if (!answer) return false
-      return answer.selectedOptions.includes(answerIndex)
-    }
-    return false
-  }
-
-
-  check = (questionIndex: number, answerIndex: number) => {
-    console.log(this.quizUserSolution,this.quizUserSolution.userAnswers)
-    if (this.quizUserSolution && this.quizUserSolution.userAnswers) {
-      let answer = this.quizUserSolution.userAnswers.find((answ) => answ.questionIndex == questionIndex) as ChosenAnswerMultichoice
-      if (!answer) {
-        answer = {questionIndex} as ChosenAnswerMultichoice
-        answer.selectedOptions = []
-        this.quizUserSolution.userAnswers.push(answer)
-      }
-      this.checkResponseInAnswer(answer, answerIndex)
-      this.saveUserSolutionDb()
-      console.log(this.quizUserSolution.userAnswers)
-    }
-  }
-
-  checkResponseInAnswer = (answer: ChosenAnswerMultichoice, answerIndex: number) => {
-    if (answer.selectedOptions.includes(answerIndex)) {
-      answer.selectedOptions.splice(answer.selectedOptions.indexOf(answerIndex), 1)
-    } else {
-      answer.selectedOptions.push(answerIndex)
-      answer.selectedOptions = answer.selectedOptions.filter((element: number, i: number) => i === answer.selectedOptions.indexOf(element))
     }
   }
 

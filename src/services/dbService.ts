@@ -154,7 +154,7 @@ export const getUserSolutions = async (quizId: string, userId: string): Promise<
         .where("userId", "==", userId).get()
 
     console.log(quizId,userId,result)
-    if (result.docs[0].data()) return result.docs[0].data() as QuizUserSolution
+    if (result.docs[0]) return result.docs[0].data() as QuizUserSolution
     console.log("----")
     return null
 }
