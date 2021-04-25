@@ -103,6 +103,7 @@ export default class QuizEntry extends Vue {
 
 
   check = (questionIndex: number, answerIndex: number) => {
+    console.log(this.quizUserSolution,this.quizUserSolution.userAnswers)
     if (this.quizUserSolution && this.quizUserSolution.userAnswers) {
       let answer = this.quizUserSolution.userAnswers.find((answ) => answ.questionIndex == questionIndex) as ChosenAnswerMultichoice
       if (!answer) {
