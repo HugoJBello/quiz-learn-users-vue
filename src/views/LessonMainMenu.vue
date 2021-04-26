@@ -43,9 +43,10 @@
               dense
           >
             <v-timeline-item
+                v-if="lesson.initialQuiz && lesson.initialQuiz.id"
                 small
             >
-              <div>
+              <div >
                 <div class="font-weight-normal">
                   <strong>{{ $t("Initial test") }}:</strong> {{ $t('see how much you already know') }}
                   <v-btn
@@ -57,14 +58,15 @@
                   </v-btn>
 
                 </div>
-                <div> </div>
+                <div></div>
               </div>
             </v-timeline-item>
 
             <v-timeline-item
                 small
+                v-if="lesson.parts && lesson.parts.length>0"
             >
-              <div>
+              <div >
                 <div class="font-weight-normal">
                   <strong>{{ $t('Explanation') }}:</strong> {{ $t('see how it is done') }}
                   <v-btn
@@ -81,8 +83,9 @@
 
             <v-timeline-item
                 small
+                v-if="lesson.finalQuiz && lesson.finalQuiz.id"
             >
-              <div>
+              <div >
                 <div class="font-weight-normal">
                   <strong>{{ $t('Test') }}:</strong> {{ $t('see how much you picked up') }}
                   <v-btn
@@ -100,7 +103,7 @@
             <v-timeline-item
                 small
             >
-              <div>
+              <div v-if="lesson.finalQuiz && lesson.finalQuiz.id">
                 <div class="font-weight-normal">
                   <strong>{{ $t('Results') }}:</strong> {{ $t('how did you do') }}
                 </div>
@@ -116,7 +119,7 @@
               v-if="showStart()"
               v-on:click="startLesson()"
           >
-            {{$t('Start')}}
+            {{ $t('Start') }}
           </v-btn>
           <v-btn
               text
@@ -124,7 +127,7 @@
               v-if="showContinue()"
               v-on:click="continueLesson()"
           >
-            {{$t('Continue')}}
+            {{ $t('Continue') }}
           </v-btn>
           <v-btn
               text
@@ -132,7 +135,7 @@
               v-if="showReview()"
               v-on:click="reviewLesson()"
           >
-            {{$t('Review')}}
+            {{ $t('Review') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -180,18 +183,22 @@ export default class LessonMainMenu extends Vue {
 
   async getUserSolutions() {
     if (this.user.uid) {
-      const prevInitialSol = await getUserSolutions((this.lesson as Lesson).initialQuiz.id, this.user.uid) as QuizUserSolution
-      if (prevInitialSol) {
-        this.initialTestSolution = Object.assign({}, prevInitialSol)
+      console.log((this.lesson as Lesson).finalQuiz.id)
+      if ((this.lesson as Lesson).initialQuiz && (this.lesson as Lesson).initialQuiz.id) {
+        const prevInitialSol = await getUserSolutions((this.lesson as Lesson).initialQuiz.id, this.user.uid) as QuizUserSolution
+        if (prevInitialSol) {
+          this.initialTestSolution = Object.assign({}, prevInitialSol)
+        }
       }
 
-      const prevFinalSol = await getUserSolutions((this.lesson as Lesson).finalQuiz.id, this.user.uid) as QuizUserSolution
-      if (prevFinalSol) {
-        this.finalTestSolution = Object.assign({}, prevFinalSol)
+      if ((this.lesson as Lesson).finalQuiz && (this.lesson as Lesson).finalQuiz.id) {
+        const prevFinalSol = await getUserSolutions((this.lesson as Lesson).finalQuiz.id, this.user.uid) as QuizUserSolution
+        if (prevFinalSol) {
+          this.finalTestSolution = Object.assign({}, prevFinalSol)
+        }
       }
     }
     console.log(this.initialTestSolution, this.finalTestSolution)
-
   }
 
   public showStart(){
