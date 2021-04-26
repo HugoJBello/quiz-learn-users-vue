@@ -40,7 +40,8 @@ export const setLessonPartStarted = async (lessonId: string, userId: string, par
         existingProgress = createNewLessonProgress(lessonId, userId)
     }
     existingProgress.lastPart = part
-    existingProgress.percentDone = 50
+    existingProgress.percentDone = Math.max(existingProgress.percentDone || 0, 50)
+
     return await saveLessonProgress(existingProgress)
 
 }
