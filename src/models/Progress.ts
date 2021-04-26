@@ -1,4 +1,3 @@
-import {Quiz} from "./quiz";
 
 export interface Progress {
     lessonsProgress: { [lectionId: string]: LessonsProgress },

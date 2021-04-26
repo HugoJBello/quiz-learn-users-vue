@@ -109,21 +109,18 @@ export const getLesson = async (id: string): Promise<Lesson| null > => {
 
     const result = await lessonsCollection.where("id", "==", id).get()
 
-    console.log(id,result)
     return result.docs[0].data() as Lesson
 }
 
 export const getQuiz = async (id: string): Promise<Quiz | null> => {
     const result = await quizzesCollection.where("id", "==", id).get()
 
-    console.log(id,result)
     return result.docs[0].data() as Quiz
 }
 
 export const getCourse = async (id: string): Promise<Course | null> => {
     const result = await coursesCollection.where("id", "==", id).get()
 
-    console.log(id,result)
     return result.docs[0].data() as Course
 }
 
@@ -138,7 +135,6 @@ export const getQuizResults = async (quizId: string, userId: string): Promise<Qu
     const result = await quizzesResultsCollection.where("quizId", "==", quizId)
         .where("userId", "==", userId).get()
 
-    console.log(quizId,result)
     return result.docs[0].data() as QuizResults
 }
 
@@ -171,7 +167,6 @@ export const getLessonResults = async (lessonId: string, userId: string): Promis
     const result = await lessonsResultsCollection.where("lessonId", "==", lessonId)
         .where("userId", "==", userId).get()
 
-    console.log(lessonId,result)
     return result.docs[0].data() as LessonResults
 }
 

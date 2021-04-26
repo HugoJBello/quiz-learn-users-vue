@@ -5,7 +5,7 @@
         <div class="card">
           <div class="card-header">Register</div>
           <div class="card-body">
-            <div v-if="error" class="alert alert-danger">{{error}}</div>
+            <div v-if="error" class="alert alert-danger">{{ error }}</div>
             <form action="#" @submit.prevent="submit">
               <div class="form-group row">
                 <div class="col-md-6">
@@ -60,15 +60,13 @@
 </template>
 
 
-
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator';
 import {auth} from "@/firebase";
 
-@Component({
-})
+@Component({})
 export default class Register extends Vue {
-  public form: any ={
+  public form: any = {
     name: "",
     email: "",
     password: ""
@@ -83,7 +81,8 @@ export default class Register extends Vue {
               .updateProfile({
                 displayName: this.form.name
               })
-        })
+        }).then(() => {
+      this.$router.push({name: 'Home'}) })
         .catch(err => {
           this.error = err.message;
         });

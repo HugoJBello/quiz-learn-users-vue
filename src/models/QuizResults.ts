@@ -3,6 +3,7 @@ export interface QuizResults {
     quizId: string,
     lessonId: string,
     userId: string,
+    completed:boolean,
     correctAnswers: number[],
     wrongAnswers: number[],
     score:number

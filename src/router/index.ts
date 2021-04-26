@@ -14,6 +14,9 @@ import Home from "@/views/Home.vue";
 import LessonsMenu from "@/views/LessonsMenu.vue";
 import LessonMainMenu from "@/views/LessonMainMenu.vue";
 import QuizEntry from "@/views/QuizEntry.vue";
+import QuizResults from "@/views/QuizResults.vue";
+import LessonPart from "@/views/LessonPart.vue";
+
 Vue.use(VueRouter)
 
 const routes: Array<RouteConfig> = [
@@ -42,9 +45,21 @@ const routes: Array<RouteConfig> = [
     meta: { requiresLogin: true }
   },
   {
+    path: '/lesson-part/:lessonId',
+    name: 'LessonPart',
+    component: LessonPart,
+    meta: { requiresLogin: true }
+  },
+  {
     path: '/quiz/:quizId',
     name: 'QuizEntry',
     component: QuizEntry,
+    meta: { requiresLogin: true }
+  },
+  {
+    path: '/quiz-results/:quizId',
+    name: 'QuizResults',
+    component: QuizResults,
     meta: { requiresLogin: true }
   },
   {

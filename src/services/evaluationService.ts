@@ -15,7 +15,7 @@ export const generateIdLessonResult = (lessonId: string, userId: string): string
     return LESSONRESULTS_COLLECTION + "_" + lessonId + "_" + userId
 }
 
-export const evaluateQuiz = (quiz:Quiz, solution: QuizUserSolution): QuizResults => {
+export const evaluateQuiz = (quiz: Quiz, solution: QuizUserSolution): QuizResults => {
     if (!quiz || !solution || !solution.userAnswers) {
         return {} as QuizResults
     }
@@ -23,6 +23,7 @@ export const evaluateQuiz = (quiz:Quiz, solution: QuizUserSolution): QuizResults
     const quizResult = {} as QuizResults
     quizResult.lessonId = quiz.lessonId
     quizResult.quizId = quiz.id
+    quizResult.userId = solution.userId
     quizResult.id = generateIdQuizResult(quiz.id, solution.userId)
     quizResult.correctAnswers = []
     quizResult.wrongAnswers = []
@@ -33,9 +34,9 @@ export const evaluateQuiz = (quiz:Quiz, solution: QuizUserSolution): QuizResults
         const correctResponsesForAnsw = quiz.questions[index].correctAnswers
         const isCorrectAns = isEqual(responses, correctResponsesForAnsw)
 
-        if (responses.length>0 && isCorrectAns) {
+        if (responses.length > 0 && isCorrectAns) {
             quizResult.correctAnswers.push(index)
-        } else if(responses.length>0) {
+        } else if (responses.length > 0) {
             quizResult.wrongAnswers.push(index)
         }
     }
@@ -44,14 +45,13 @@ export const evaluateQuiz = (quiz:Quiz, solution: QuizUserSolution): QuizResults
     const numCorrectQuest = quizResult.correctAnswers.length
     const numWrongQuest = quizResult.wrongAnswers.length
 
-    const score = (numCorrectQuest)/numTotalQuest - (numWrongQuest * 0.25)/numTotalQuest
+    const score = (numCorrectQuest) / numTotalQuest - (numWrongQuest * 0.25) / numTotalQuest
     quizResult.score = score * 100
-    return  quizResult
+    return quizResult
 }
 
 
-
-export const evaluateLesson = (lesson:Lesson, solutionInitialTest: QuizResults, solutionFinalTest:QuizResults): LessonResults => {
+export const evaluateLesson = (lesson: Lesson, solutionInitialTest: QuizResults, solutionFinalTest: QuizResults): LessonResults => {
     if (!lesson || !solutionInitialTest || !solutionFinalTest.score) {
         return {} as LessonResults
     }

@@ -16,9 +16,20 @@ import {setAvailableLessonsInCourse} from "@/store/actions/availableLessonsInCou
 
 Vue.use(Vuex)
 
-const selectedCourseLocalStorage = JSON.parse(localStorage.getItem("selectedCourse") || "" as string)
-const selectedLessonLocalStorage = JSON.parse(localStorage.getItem("selectedLesson") || "" as string)
+let selectedCourseLocalStorage
+let selectedLessonLocalStorage
 
+try {
+    selectedCourseLocalStorage = JSON.parse(localStorage.getItem("selectedCourse") || "" as string)
+} catch (e) {
+    console.log(e)
+}
+
+try {
+    selectedLessonLocalStorage = JSON.parse(localStorage.getItem("selectedLesson") || "" as string)
+} catch (e) {
+    console.log(e)
+}
 export default new Vuex.Store({
     state: {
         selectedCourse: selectedCourseLocalStorage || null,

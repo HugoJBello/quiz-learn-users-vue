@@ -20,17 +20,46 @@
       </v-card-text>
     </v-card>
 
-    <div           v-for="(question, questionIndex) in quiz.questions"
-                   :key="question.questionText + questionIndex"
-
+    <v-card
+        class="mx-auto lesson"
+        max-width="444"
+        v-for="(question, questionIndex) in quiz.questions"
+        :key="question.questionText + questionIndex"
+        outlined
     >
-      <QuestionCard
-          :questionIndex="questionIndex"
-          :question="question"
-          :quiz="quiz"
-          :quizUserSolution="quizUserSolution"
+      <v-list-item          three-line>
+        <v-list-item-content>
+          <div class="subtitle-1">
+            {{ question.questionText }}
+          </div>
+          <div class="answer" v-for="(answer, answerIndex) in question.answerOptions"
+                                :key="answer+ answerIndex">
+            <input type="checkbox" :checked="isChecked(questionIndex, answerIndex)" @change="check(questionIndex, answerIndex)"/> {{answer}}
+          </div>
+        </v-list-item-content>
+
+        <v-list-item-avatar
+            tile
+            size="120"
+            color="grey"
+            v-if="quiz.imageUrl"
+        >
+          <v-img
+
+              :src="quiz.imageUrl"
+          ></v-img>
+        </v-list-item-avatar>
+      </v-list-item>
+    </v-card>
+
+    <div class="button">
+    <v-btn
+          text
+          color="teal accent-4"
+          v-on:click="continueLesson()"
       >
-      </QuestionCard>
+        {{$t('See results')}}<v-icon>mdi-chevron-double-right</v-icon>
+      </v-btn>
     </div>
 
   </v-container>
@@ -42,14 +71,13 @@ import {getQuiz, getUserSolutions, saveUserSolutions} from "@/services/dbService
 import {Quiz} from "@/models/Quiz";
 import {ChosenAnswerMultichoice, QuizUserSolution} from "@/models/QuizUserSolution";
 import {v4 as uuidv4} from "uuid";
-import QuestionCard from "@/components/QuestionCard.vue";
 
 @Component({
-  components: {QuestionCard},
+  components: {},
 })
 export default class QuizEntry extends Vue {
   public quiz: Quiz | undefined
-  public quizUserSolution: QuizUserSolution = {} as QuizUserSolution
+  public quizUserSolution: QuizUserSolution
 
   get user() {
     return this.$store.state.user
@@ -60,9 +88,9 @@ export default class QuizEntry extends Vue {
       const prevSol = await getUserSolutions(quizId, this.user.uid) as QuizUserSolution
       if (prevSol) {
         this.quizUserSolution = Object.assign({}, prevSol)
-        console.log(this.quizUserSolution,this.quizUserSolution.userAnswers)
 
       } else {
+        this.quizUserSolution = {} as QuizUserSolution
         const answers = [] as ChosenAnswerMultichoice[]
         this.quizUserSolution.userAnswers = answers
         this.quizUserSolution.startedAt = new Date()
@@ -72,11 +100,55 @@ export default class QuizEntry extends Vue {
       }
     }
   }
+  async saveUserSolutionDb(){
+    await saveUserSolutions(this.quizUserSolution)
+  }
+
+  isChecked(questionIndex: number, answerIndex: number): boolean  {
+
+    if (this.quizUserSolution && this.quizUserSolution.userAnswers) {
+      const answer = this.quizUserSolution.userAnswers.find((answ) => answ.questionIndex == questionIndex) as ChosenAnswerMultichoice
+      if (!answer) return false
+      return answer.selectedOptions.includes(answerIndex)
+    }
+    return false
+  }
+
+
+  check(questionIndex: number, answerIndex: number) {
+    if (this.quizUserSolution && this.quizUserSolution.userAnswers) {
+      let answer = this.quizUserSolution.userAnswers.find((answ) => answ.questionIndex == questionIndex) as ChosenAnswerMultichoice
+      if (!answer) {
+        answer = {questionIndex} as ChosenAnswerMultichoice
+        answer.selectedOptions = []
+        this.quizUserSolution.userAnswers.push(answer)
+      }
+      this.checkResponseInAnswer(answer, answerIndex)
+      this.saveUserSolutionDb()
+    }
+  }
+
+  checkResponseInAnswer(answer: ChosenAnswerMultichoice, answerIndex: number) {
+    if (answer.selectedOptions.includes(answerIndex)) {
+      answer.selectedOptions.splice(answer.selectedOptions.indexOf(answerIndex), 1)
+    } else {
+      answer.selectedOptions.push(answerIndex)
+      answer.selectedOptions = answer.selectedOptions.filter((element: number, i: number) => i === answer.selectedOptions.indexOf(element))
+    }
+  }
+
+  async continueLesson() {
+    this.quizUserSolution.completed = true
+    console.log(this.quizUserSolution)
+    await saveUserSolutions(this.quizUserSolution)
+
+    this.$router.push({ name: 'QuizResults', params: { quizId:(this.quiz as Quiz).id } })
+
+  }
 
   async created() {
     this.quiz = await getQuiz( this.$route.params.quizId) as Quiz
     await this.getPreviousSolution(this.$route.params.quizId)
-    console.log(this.quizUserSolution)
     this.$forceUpdate()
   }
 
@@ -89,5 +161,9 @@ export default class QuizEntry extends Vue {
 }
 .answer{
   margin: 10px;
+}
+.button{
+  text-align: center;
+  margin: 0 auto;
 }
 </style>

@@ -1,3 +1,4 @@
+import './router/componentHooks' // <-- Needs to be first
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
@@ -7,8 +8,13 @@ import VueI18n from 'vue-i18n'
 import {messages} from './messages'
 import Vue2Editor from "vue2-editor";
 import 'vuetify/dist/vuetify.min.css';
+
+import Donut from 'vue-css-donut-chart';
+import 'vue-css-donut-chart/dist/vcdonut.css';
 Vue.use(VueI18n)
 Vue.use(Vue2Editor as any)
+Vue.use(Donut)
+
 Vue.config.productionTip = false
 Vue.config.silent = true;
 
