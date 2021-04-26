@@ -102,8 +102,9 @@
 
             <v-timeline-item
                 small
+                v-if="lesson.finalQuiz && lesson.finalQuiz.id"
             >
-              <div v-if="lesson.finalQuiz && lesson.finalQuiz.id">
+              <div>
                 <div class="font-weight-normal">
                   <strong>{{ $t('Results') }}:</strong> {{ $t('how did you do') }}
                 </div>
@@ -140,6 +141,16 @@
         </v-card-actions>
       </v-card>
     </v-row>
+    <div class="button">
+      <v-btn
+          text
+          color="teal accent-4"
+          v-on:click="otherLessons()"
+      >
+        <v-icon>mdi-chevron-double-left</v-icon>
+        {{ $t('Other lessons') }}
+      </v-btn>
+    </div>
   </v-container>
 </template>
 
@@ -161,7 +172,6 @@ export default class LessonMainMenu extends Vue {
     return this.$store.state.user
   }
   public initalQuizClick(){
-    console.log("--initial---")
     if (this.initialTestSolution && this.initialTestSolution.completed) {
       console.log(this.initialTestSolution.completed)
       this.$router.push({ name: 'QuizResults', params: { quizId:(this.lesson as Lesson).initialQuiz.id } })
@@ -170,13 +180,18 @@ export default class LessonMainMenu extends Vue {
     }
   }
   public finalQuizClick(){
-    console.log("--final---")
     if (this.finalTestSolution && this.finalTestSolution.completed) {
       this.$router.push({ name: 'QuizResults', params: { quizId:(this.lesson as Lesson).finalQuiz.id } })
     } else {
       this.$router.push({ name: 'QuizEntry', params: { quizId:(this.lesson as Lesson).finalQuiz.id } })
     }
   }
+
+  public otherLessons(){
+    this.$router.push({ name: 'Lessons', params: { courseId:(this.lesson as Lesson).courseId} })
+
+  }
+
   public goToLesson(){
     this.$router.push({ name: 'LessonPart', params: { quizId:(this.lesson as Lesson).id} })
   }
