@@ -38,12 +38,18 @@
         {{$t('Continue')}}
       </v-btn>
     </v-card-actions>
+    <v-progress-linear
+        v-if="lessonProgress"
+        :value="''+lessonProgress.percentDone"
+    ></v-progress-linear>
   </v-card>
 </template>
 
 <script lang="ts">
 import {Component, Prop, Vue} from 'vue-property-decorator';
 import {Lesson} from "@/models/Lessons";
+import {LessonsProgress} from "@/models/Progress";
+import {getLessonProgress} from "@/services/dbService";
 
 @Component({
   components: {},
@@ -51,10 +57,21 @@ import {Lesson} from "@/models/Lessons";
 export default class QuizCard extends Vue {
   @Prop({required: false})
   public lesson: Lesson | undefined
+  public lessonProgress: LessonsProgress | null
 
   public select = (lesson: Lesson) => {
     this.$store.dispatch('setSelectedLessonAction', lesson)
     this.$router.push({ name: 'LessonMainMenu', params: { lessonId:lesson.id } })
+
+  }
+  get user() {
+    return this.$store.state.user
+  }
+  async created() {
+    if (this.lesson && "id" in this.lesson) {
+      this.lessonProgress = await getLessonProgress(this.lesson.id, this.user.uid)
+    }
+    this.$forceUpdate()
 
   }
 

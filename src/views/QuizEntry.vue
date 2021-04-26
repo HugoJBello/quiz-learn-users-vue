@@ -68,9 +68,15 @@
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator';
 import {getQuiz, getUserSolutions, saveUserSolutions} from "@/services/dbService";
-import {Quiz} from "@/models/Quiz";
+import {Quiz, QuizType} from "@/models/Quiz";
 import {ChosenAnswerMultichoice, QuizUserSolution} from "@/models/QuizUserSolution";
 import {v4 as uuidv4} from "uuid";
+import {
+  setFinalQuizAsFinished,
+  setFinalQuizAsStarted,
+  setInitialQuizAsFinished,
+  setInitialQuizAsStarted
+} from "@/services/progressService";
 
 @Component({
   components: {},
@@ -142,6 +148,12 @@ export default class QuizEntry extends Vue {
     console.log(this.quizUserSolution)
     await saveUserSolutions(this.quizUserSolution)
 
+    if ((this.quiz as Quiz).type === QuizType.INITIAL) {
+      await setInitialQuizAsFinished((this.quiz as Quiz).lessonId, this.user.uid)
+    } else {
+      await setFinalQuizAsFinished((this.quiz as Quiz).lessonId, this.user.uid)
+    }
+
     this.$router.push({ name: 'QuizResults', params: { quizId:(this.quiz as Quiz).id } })
 
   }
@@ -149,6 +161,13 @@ export default class QuizEntry extends Vue {
   async created() {
     this.quiz = await getQuiz( this.$route.params.quizId) as Quiz
     await this.getPreviousSolution(this.$route.params.quizId)
+
+    if (this.quiz.type === QuizType.INITIAL) {
+      await setInitialQuizAsStarted(this.quiz.lessonId, this.user.uid)
+    } else {
+      await setFinalQuizAsStarted(this.quiz.lessonId, this.user.uid)
+    }
+
     this.$forceUpdate()
   }
 

@@ -70,6 +70,7 @@ import {Component, Vue} from 'vue-property-decorator';
 import {Lesson, Part} from "@/models/Lessons";
 import {getLesson} from "@/services/dbService";
 import {Quiz} from "@/models/Quiz";
+import {setLessonPartStarted} from "@/services/progressService";
 
 @Component({
   components: {},
@@ -79,8 +80,11 @@ export default class LessonPart extends Vue {
   public partIndex = 1
   public part: Part
 
+  get user() {
+    return this.$store.state.user
+  }
+
   public async nextPage() {
-    console.log("next")
     if (this.partIndex < (this.lesson as Lesson).parts.length) {
       await this.getData()
     }
@@ -97,6 +101,7 @@ export default class LessonPart extends Vue {
     this.part = this.lesson.parts[this.partIndex - 1]
     console.log(this.lesson)
     console.log(this.partIndex)
+    await setLessonPartStarted((this.lesson as Lesson).id, this.user.uid, this.partIndex-1)
     this.$forceUpdate()
   }
 
@@ -111,9 +116,9 @@ export default class LessonPart extends Vue {
 
   async continueLesson() {
     const finalQuizId = (this.lesson as Lesson).finalQuiz.id
+    await setLessonPartStarted((this.lesson as Lesson).id, this.user.uid, this.partIndex-1)
     if (finalQuizId) {
       await this.$router.push({name: 'QuizEntry', params: {quizId: finalQuizId}})
-
     }
   }
 

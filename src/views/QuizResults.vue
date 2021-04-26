@@ -145,6 +145,12 @@ import {ChosenAnswerMultichoice, QuizUserSolution} from "@/models/QuizUserSoluti
 import {QuizResults} from "@/models/QuizResults";
 import {evaluateQuiz} from "@/services/evaluationService";
 import {QuizType} from '@/models/Quiz';
+import {
+  setFinalQuizAsFinished,
+  setFinalQuizAsStarted,
+  setInitialQuizAsFinished,
+  setInitialQuizAsStarted
+} from "@/services/progressService";
 
 @Component({
   components: {},
@@ -212,7 +218,7 @@ export default class QuizResultsMenu extends Vue {
   async created() {
     this.quiz = await getQuiz(this.$route.params.quizId) as Quiz
     await this.getPreviousSolution(this.$route.params.quizId)
-    this.evaluateResults()
+    await this.evaluateResults()
     this.$forceUpdate()
   }
 

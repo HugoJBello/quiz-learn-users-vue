@@ -47,4 +47,5 @@ export const quizzesResultsCollection = db.collection('quizesResults')
 export const userSolutionsCollection = db.collection('userSolutions')
 export const lessonsResultsCollection = db.collection('lessonsResults')
 export const userProgressCollection = db.collection('userProgress')
+export const lessonProgressCollection = db.collection('lessonProgress')
 

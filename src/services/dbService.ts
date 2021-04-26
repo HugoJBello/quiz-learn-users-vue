@@ -1,5 +1,5 @@
 import {
-    coursesCollection,
+    coursesCollection, lessonProgressCollection,
     lessonsCollection,
     lessonsResultsCollection,
     partsCollection,
@@ -9,9 +9,10 @@ import {
 import {Quiz} from "../models/Quiz";
 import {Lesson, Part} from "@/models/Lessons";
 import {Course} from "@/models/Course";
-import { v4 as uuidv4 } from 'uuid';
+import {v4 as uuidv4} from 'uuid';
 import {LessonResults, QuizResults} from "@/models/QuizResults";
 import {QuizUserSolution} from "@/models/QuizUserSolution";
+import {LessonsProgress} from "@/models/Progress";
 
 export const getQuizzesAvailable = async (limit: number, skip: number): Promise<Quiz[]> => {
     //const result  = await quizzesCollection.limit(10).where("public", "==", true).orderBy("date", "desc").get()
@@ -105,7 +106,7 @@ export const deleteCourse = async (course: Course) => {
     return coursesCollection.doc(course.id).delete()
 }
 
-export const getLesson = async (id: string): Promise<Lesson| null > => {
+export const getLesson = async (id: string): Promise<Lesson | null> => {
 
     const result = await lessonsCollection.where("id", "==", id).get()
 
@@ -126,7 +127,7 @@ export const getCourse = async (id: string): Promise<Course | null> => {
 
 export const getPart = async (id: string): Promise<Part | null> => {
     const result = await partsCollection.where("id", "==", id).get()
-    console.log(id,result)
+    console.log(id, result)
     return result.docs[0].data() as Part
 }
 
@@ -149,9 +150,8 @@ export const getUserSolutions = async (quizId: string, userId: string): Promise<
     const result = await userSolutionsCollection.where("quizId", "==", quizId)
         .where("userId", "==", userId).get()
 
-    console.log(quizId,userId,result)
+    console.log(quizId, userId, result)
     if (result.docs[0]) return result.docs[0].data() as QuizUserSolution
-    console.log("----")
     return null
 }
 
@@ -162,6 +162,20 @@ export const saveUserSolutions = async (quizResults: QuizUserSolution) => {
     return userSolutionsCollection.doc(quizResults.id).set(quizResults)
 }
 
+export const getLessonProgress = async (lessonId: string, userId: string): Promise<LessonsProgress | null> => {
+    const result = await lessonProgressCollection.where("lessonId", "==", lessonId)
+        .where("userId", "==", userId).get()
+
+    if (result.docs[0]) return result.docs[0].data() as LessonsProgress
+    return null
+}
+
+export const saveLessonProgress = async (lessonsProgress: LessonsProgress) => {
+    if (!lessonsProgress.id) {
+        lessonsProgress.id = uuidv4()
+    }
+    return lessonProgressCollection.doc(lessonsProgress.id).set(lessonsProgress)
+}
 
 export const getLessonResults = async (lessonId: string, userId: string): Promise<LessonResults | null> => {
     const result = await lessonsResultsCollection.where("lessonId", "==", lessonId)

@@ -9,11 +9,14 @@ export interface Progress {
 }
 
 export interface LessonsProgress {
-    globalStatus: LectionStatus
-    percentDone: number
-    lastPart: number
-    initialQuizProgress: QuizStatus
-    finalQuizProgress: QuizStatus
+    globalStatus: LectionStatus,
+    percentDone: number,
+    lastPart: number,
+    initialQuizProgress: QuizStatus,
+    finalQuizProgress: QuizStatus,
+    userId: string,
+    lessonId: string,
+    id: string
 }
 
 export enum LectionStatus {
