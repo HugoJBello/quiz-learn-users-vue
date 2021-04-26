@@ -80,9 +80,9 @@
       >
         <v-list-item three-line>
           <v-list-item-content>
-            <v-list-item-title class="headline mb-1">
+            <div class="subtitle-1">
               {{ question.questionText }}
-            </v-list-item-title>
+            </div>
 
             <v-list-item-subtitle>
               <strong>{{ $t('You answered') }}: </strong>
