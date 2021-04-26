@@ -219,6 +219,11 @@ export default class QuizResultsMenu extends Vue {
     this.quiz = await getQuiz(this.$route.params.quizId) as Quiz
     await this.getPreviousSolution(this.$route.params.quizId)
     await this.evaluateResults()
+    if ((this.quiz as Quiz).type === QuizType.INITIAL) {
+      await setInitialQuizAsFinished((this.quiz as Quiz).lessonId, this.user.uid)
+    } else {
+      await setFinalQuizAsFinished((this.quiz as Quiz).lessonId, this.user.uid)
+    }
     this.$forceUpdate()
   }
 
