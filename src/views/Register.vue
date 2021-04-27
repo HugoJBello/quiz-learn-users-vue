@@ -6,11 +6,11 @@
           <div class="card-header">Register</div>
           <div class="card-body">
             <div v-if="error" class="alert alert-danger">{{ error }}</div>
-            <form action="#" @submit.prevent="submit">
+            <div action="#">
               <div class="form-group row">
                 <div class="col-md-6">
                   <v-text-field
-                      label="name"
+                      :label="$t('nickname')"
                       id="name"
                       type="name"
                       required
@@ -23,7 +23,7 @@
               <div class="form-group row">
                 <div class="col-md-6">
                   <v-text-field
-                      label="email"
+                      :label="$t('email or username')"
                       id="email"
                       type="email"
                       required
@@ -36,7 +36,7 @@
               <div class="form-group row">
                 <div class="col-md-6">
                   <v-text-field
-                      label="password"
+                      :label="$t('password')"
                       id="password"
                       type="password"
                       required
@@ -48,10 +48,17 @@
 
               <div class="form-group row mb-0">
                 <div class="col-md-8 offset-md-4">
-                  <button type="submit" class="btn btn-primary">Register</button>
+                  <v-btn
+                      text
+                      small
+                      color="teal accent-4"
+                      v-on:click="register()"
+                  >
+                    {{ $t('Register') }}
+                  </v-btn>
                 </div>
               </div>
-            </form>
+            </div>
           </div>
         </div>
       </div>
@@ -74,8 +81,13 @@ export default class Register extends Vue {
 
   public error: any | null = null
 
-  public submit() {
-    auth.createUserWithEmailAndPassword(this.form.email, this.form.password)
+  public register() {
+    let email = this.form.email
+    if (!email.includes("@")) {
+      email = email + "@quizlearn.com"
+    }
+
+    auth.createUserWithEmailAndPassword(email, this.form.password)
         .then(data => {
           (data.user as any)
               .updateProfile({

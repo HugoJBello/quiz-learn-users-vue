@@ -6,7 +6,7 @@
           <div class="card-header">Login</div>
           <div class="card-body">
             <div v-if="error" class="alert alert-danger">{{ error }}</div>
-            <form action="#" @submit.prevent="submit">
+            <div action="#">
               <div class="form-group row">
                 <div class="col-md-6">
                   <v-text-field
@@ -34,10 +34,27 @@
 
               <div class="form-group row mb-0">
                 <div class="col-md-8 offset-md-4">
-                  <button type="submit" class="btn btn-primary">Login</button>
+                  <v-btn
+                      text
+                      color="teal accent-4"
+                      v-on:click="login()"
+                  >
+                    {{ $t('Login') }}
+                  </v-btn>
+
+                  <v-btn
+                      text
+                      small
+                      color="teal accent-4"
+                      v-on:click="register()"
+                  >
+                    {{ $t('Register') }}
+                  </v-btn>
+
                 </div>
+
               </div>
-            </form>
+            </div>
           </div>
         </div>
       </div>
@@ -49,6 +66,7 @@
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator';
 import {auth} from "@/firebase";
+import {Quiz} from "@/models/Quiz";
 
 @Component({})
 export default class Login extends Vue {
@@ -59,7 +77,7 @@ export default class Login extends Vue {
 
   public error: any | null = null
 
-  public async submit() {
+  public async login() {
     try {
       const data = await auth.signInWithEmailAndPassword(this.form.email, this.form.password)
       console.log(data.user)
@@ -69,5 +87,13 @@ export default class Login extends Vue {
       this.error = e.message;
     }
   }
+
+  public async register(){
+    await this.$router.push({name: 'Register'})
+  }
 }
 </script>
+
+<style>
+.container{margin:0 auto}
+</style>
