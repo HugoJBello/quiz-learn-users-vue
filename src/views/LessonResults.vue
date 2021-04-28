@@ -45,7 +45,7 @@
             <v-list-item-avatar
                 tile
                 size="220"
-                v-if="quizInitialResults"
+                v-if="quizInitialResults || quizFinalResults"
             >
               <QuizResultsChart class="chart" :quizResults="quizInitialResults" :size="70"></QuizResultsChart>
               <QuizResultsChart class="chart" :quizResults="quizFinalResults" :size="70"></QuizResultsChart>
@@ -59,6 +59,7 @@
       <v-card
           v-if="lessonResults"
           class="mx-auto description"
+          min-width="200"
           max-width="400"
       >
         <v-card-text>
@@ -79,6 +80,16 @@
       </v-card>
 
     </v-row>
+    <v-btn
+        text
+        class="back"
+        color="teal accent-4"
+        v-on:click="back()"
+    >
+      <v-icon>mdi-chevron-double-left</v-icon>
+
+      {{ $t('Lesson Menu') }}
+    </v-btn>
   </v-container>
 </template>
 
@@ -113,7 +124,7 @@ export default class LessonResultsMenu extends Vue {
   }
 
 
-  async lessonMenu() {
+  async back() {
     console.log()
     this.$router.push({name: 'LessonMainMenu', params: {lessonId: (this.lesson as Lesson).id}})
 
@@ -160,8 +171,7 @@ export default class LessonResultsMenu extends Vue {
   margin-left: 10px;
 }
 
-.button {
-  text-align: center;
-  margin: 0 auto;
+.back {
+  margin-left: 50px;
 }
 </style>

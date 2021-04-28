@@ -122,21 +122,26 @@ export const getQuiz = async (id: string): Promise<Quiz | null> => {
 export const getCourse = async (id: string): Promise<Course | null> => {
     const result = await coursesCollection.where("id", "==", id).get()
 
-    return result.docs[0].data() as Course
+    if (result.docs[0]) return result.docs[0].data() as Course
+    return null
+
 }
 
 export const getPart = async (id: string): Promise<Part | null> => {
     const result = await partsCollection.where("id", "==", id).get()
     console.log(id, result)
-    return result.docs[0].data() as Part
+    if (result.docs[0]) return result.docs[0].data() as Part
+    return null
+
 }
 
 
 export const getQuizResults = async (quizId: string, userId: string): Promise<QuizResults | null> => {
     const result = await quizzesResultsCollection.where("quizId", "==", quizId)
         .where("userId", "==", userId).get()
+    if (result.docs[0]) return result.docs[0].data() as QuizResults
+    return null
 
-    return result.docs[0].data() as QuizResults
 }
 
 export const saveQuizResults = async (quizResults: QuizResults) => {
@@ -181,7 +186,8 @@ export const getLessonResults = async (lessonId: string, userId: string): Promis
     const result = await lessonsResultsCollection.where("lessonId", "==", lessonId)
         .where("userId", "==", userId).get()
 
-    return result.docs[0].data() as LessonResults
+    if (result.docs[0]) return result.docs[0].data() as LessonResults
+    return null
 }
 
 export const saveLessonResults = async (lessonResults: LessonResults) => {
