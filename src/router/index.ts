@@ -1,21 +1,16 @@
 import Vue from 'vue'
-import VueRouter, { RouteConfig } from 'vue-router'
+import VueRouter, {RouteConfig} from 'vue-router'
 import CoursesMenu from '../views/CoursesMenu.vue'
-import QuizzProgress from "@/views/LessonMainMenu.vue";
+import LessonMainMenu from "@/views/LessonMainMenu.vue";
 import Register from "@/views/Register.vue";
 import Login from "@/views/Login.vue";
-import LessonConsole from "@/views/LessonConsole.vue";
-import LessonEdit from "@/views/LessonEdit.vue";
-import QuizEdit from "@/views/QuizEdit.vue";
-import PartEdit from "@/views/PartEdit.vue";
-import store from "../store"
 import {getCurrentUserFirebase} from "@/firebase";
 import Home from "@/views/Home.vue";
 import LessonsMenu from "@/views/LessonsMenu.vue";
-import LessonMainMenu from "@/views/LessonMainMenu.vue";
 import QuizEntry from "@/views/QuizEntry.vue";
 import QuizResults from "@/views/QuizResults.vue";
 import LessonPart from "@/views/LessonPart.vue";
+import LessonResultsMenu from "@/views/LessonResults.vue";
 
 Vue.use(VueRouter)
 
@@ -60,6 +55,12 @@ const routes: Array<RouteConfig> = [
     path: '/quiz-results/:quizId',
     name: 'QuizResults',
     component: QuizResults,
+    meta: { requiresLogin: true }
+  },
+  {
+    path: '/lesson-results/:lessonId',
+    name: 'LessonResults',
+    component: LessonResultsMenu,
     meta: { requiresLogin: true }
   },
   {

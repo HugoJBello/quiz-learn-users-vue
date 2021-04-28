@@ -188,5 +188,6 @@ export const saveLessonResults = async (lessonResults: LessonResults) => {
     if (!lessonResults.id) {
         lessonResults.id = uuidv4()
     }
+    console.log(lessonResults)
     return lessonsResultsCollection.doc(lessonResults.id).set(lessonResults)
 }

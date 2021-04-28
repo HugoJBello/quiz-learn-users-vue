@@ -52,14 +52,15 @@ export const evaluateQuiz = (quiz: Quiz, solution: QuizUserSolution): QuizResult
 
 
 export const evaluateLesson = (lesson: Lesson, solutionInitialTest: QuizResults, solutionFinalTest: QuizResults): LessonResults => {
-    if (!lesson || !solutionInitialTest || !solutionFinalTest.score) {
+    if (!lesson || !solutionFinalTest.score) {
         return {} as LessonResults
     }
     const lessonResult = {} as LessonResults
     lessonResult.lessonId = lesson.id
     lessonResult.id = generateIdLessonResult(lesson.id, solutionInitialTest.userId)
-    lessonResult.initialQuizResult = solutionInitialTest
+    if (solutionInitialTest) lessonResult.initialQuizResult = solutionInitialTest
     lessonResult.finalQuizResult = solutionFinalTest
     lessonResult.totalScore = solutionFinalTest.score
+    lessonResult.improvement = solutionFinalTest.score - (solutionInitialTest.score || 0)
     return lessonResult
 }

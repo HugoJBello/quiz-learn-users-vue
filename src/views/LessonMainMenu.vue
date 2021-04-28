@@ -92,6 +92,13 @@
               <div>
                 <div class="font-weight-normal">
                   <strong>{{ $t('Results') }}:</strong> {{ $t('how did you do') }}
+                  <v-btn
+                      text
+                      color="teal accent-4"
+                      v-on:click="resultsClick()"
+                  >
+                    <v-icon>mdi-chevron-double-right</v-icon>
+                  </v-btn>
                 </div>
                 <div></div>
               </div>
@@ -175,6 +182,12 @@ export default class LessonMainMenu extends Vue {
       this.$router.push({name: 'QuizEntry', params: {quizId: (this.lesson as Lesson).finalQuiz.id}})
     }
   }
+  public resultsClick() {
+    if (this.finalTestSolution && this.finalTestSolution.completed) {
+      this.$router.push({name: 'LessonResults', params: {quizId: (this.lesson as Lesson).id}})
+    }
+  }
+
 
   public otherLessons() {
     this.$router.push({name: 'Lessons', params: {courseId: (this.lesson as Lesson).courseId}})

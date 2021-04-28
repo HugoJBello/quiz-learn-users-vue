@@ -17,5 +17,6 @@ export interface LessonResults {
     initialQuizResult: QuizResults,
     finalQuizResult: QuizResults,
     totalScore: number
+    improvement: number
 
 }
