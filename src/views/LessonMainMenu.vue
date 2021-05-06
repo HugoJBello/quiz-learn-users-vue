@@ -95,6 +95,7 @@
                   <v-btn
                       text
                       color="teal accent-4"
+                      v-if="finalTestSolution"
                       v-on:click="resultsClick()"
                   >
                     <v-icon>mdi-chevron-double-right</v-icon>
@@ -230,11 +231,15 @@ export default class LessonMainMenu extends Vue {
   }
 
   public continueLesson() {
-    this.$router.push({name: 'LessonPart', params: {quizId: (this.lesson as Lesson).id}})
+    if (this.lesson?.parts && this.lesson.parts.length> 0) {
+      this.$router.push({name: 'LessonPart', params: {quizId: (this.lesson as Lesson).id}})
+    } else if ((this.lesson as Lesson).finalQuiz.id){
+      this.$router.push({name: 'QuizEntry', params: {quizId: (this.lesson as Lesson).finalQuiz.id}})
+    }
   }
 
   public showReview() {
-    return (this.finalTestSolution)
+    return (this.finalTestSolution && this.lesson?.parts && this.lesson.parts.length>0)
   }
 
   public reviewLesson() {
