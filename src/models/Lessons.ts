@@ -3,6 +3,7 @@ import {Quiz} from "./Quiz";
 export interface Lesson {
     id: string,
     type: string,
+    index: number,
     title: string,
     createdAt: Date,
     updatedAt: Date,

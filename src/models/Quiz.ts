@@ -24,6 +24,7 @@ export interface Question {
     type: string,
     questionText: string,
     answerOptions: string[],
+    answerImages: { [answer: string]: string },
     correctAnswers: number[],
     tips: string[],
     explanation: string,

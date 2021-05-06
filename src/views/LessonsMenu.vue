@@ -30,9 +30,19 @@ export default class LessonsMenu extends Vue {
   public loading = true
 
   get lessons() {
-    return this.$store.state.availableLessonsInCourse
-  }
+    const lessons = this.$store.state.availableLessonsInCourse
+    if (lessons){
+      return this.sortLesson(lessons)
 
+    }
+  }
+  sortLesson(lessons: Lesson[]) {
+    return lessons.sort((lesson1, lesson2) => {
+      if (!lesson1.index && lesson2.index) return -1
+      if (lesson1.index && !lesson2.index) return 1
+      return lesson1.index - lesson2.index
+    })
+  }
   async created() {
     await this.$store.dispatch('setAvailableLessonsInCourse', this.$route.params.courseId)
     this.loading = false

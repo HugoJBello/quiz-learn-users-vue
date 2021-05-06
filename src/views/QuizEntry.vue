@@ -9,7 +9,7 @@
           :src="quiz.imageUrl"
       ></v-img>
       <v-card-text>
-        <div>{{$t('Quiz')}}</div>
+        <div>{{ $t('Quiz') }}</div>
         <p class="display-1 text--primary">
           {{ quiz.title }}
         </p>
@@ -27,14 +27,25 @@
         :key="question.questionText + questionIndex"
         outlined
     >
-      <v-list-item          three-line>
+      <v-list-item three-line>
         <v-list-item-content>
           <div class="subtitle-1">
             {{ question.questionText }}
           </div>
           <div class="answer" v-for="(answer, answerIndex) in question.answerOptions"
-                                :key="answer+ answerIndex">
-            <input type="checkbox" :checked="isChecked(questionIndex, answerIndex)" @change="check(questionIndex, answerIndex)"/> {{answer}}
+               :key="answer+ answerIndex">
+            <input type="checkbox" :checked="isChecked(questionIndex, answerIndex)"
+                   @change="check(questionIndex, answerIndex)"/> {{ answer }}
+            <div                   v-if="question.answerImages && question.answerImages[answer]"
+                                   class="image">
+              <v-img
+                  lazy-src="https://picsum.photos/id/11/10/6"
+                  max-height="150"
+                  max-width="150"
+                  style="margin: 0 auto"
+                  :src="question.answerImages[answer]"
+              ></v-img>
+            </div>
           </div>
         </v-list-item-content>
 
@@ -53,12 +64,13 @@
     </v-card>
 
     <div class="button">
-    <v-btn
+      <v-btn
           text
           color="teal accent-4"
           v-on:click="continueLesson()"
       >
-        {{$t('See results')}}<v-icon>mdi-chevron-double-right</v-icon>
+        {{ $t('See results') }}
+        <v-icon>mdi-chevron-double-right</v-icon>
       </v-btn>
     </div>
 
@@ -89,7 +101,7 @@ export default class QuizEntry extends Vue {
     return this.$store.state.user
   }
 
-  async getPreviousSolution (quizId: string) {
+  async getPreviousSolution(quizId: string) {
     if (this.user.uid) {
       const prevSol = await getUserSolutions(quizId, this.user.uid) as QuizUserSolution
       if (prevSol) {
@@ -106,11 +118,12 @@ export default class QuizEntry extends Vue {
       }
     }
   }
-  async saveUserSolutionDb(){
+
+  async saveUserSolutionDb() {
     await saveUserSolutions(this.quizUserSolution)
   }
 
-  isChecked(questionIndex: number, answerIndex: number): boolean  {
+  isChecked(questionIndex: number, answerIndex: number): boolean {
 
     if (this.quizUserSolution && this.quizUserSolution.userAnswers) {
       const answer = this.quizUserSolution.userAnswers.find((answ) => answ.questionIndex == questionIndex) as ChosenAnswerMultichoice
@@ -154,12 +167,12 @@ export default class QuizEntry extends Vue {
       await setFinalQuizAsFinished((this.quiz as Quiz).lessonId, this.user.uid)
     }
 
-    this.$router.push({ name: 'QuizResults', params: { quizId:(this.quiz as Quiz).id } })
+    this.$router.push({name: 'QuizResults', params: {quizId: (this.quiz as Quiz).id}})
 
   }
 
   async created() {
-    this.quiz = await getQuiz( this.$route.params.quizId) as Quiz
+    this.quiz = await getQuiz(this.$route.params.quizId) as Quiz
     await this.getPreviousSolution(this.$route.params.quizId)
 
     if (this.quiz.type === QuizType.INITIAL) {
@@ -175,14 +188,20 @@ export default class QuizEntry extends Vue {
 </script>
 
 <style>
-.description{
+.description {
   margin: 30px
 }
-.answer{
+
+.answer {
   margin: 10px;
 }
-.button{
+
+.button {
   text-align: center;
   margin: 0 auto;
+}
+
+.image {
+  padding-top: 10px;
 }
 </style>
