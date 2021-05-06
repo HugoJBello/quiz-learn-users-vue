@@ -29,6 +29,7 @@
           >
             <v-timeline-item
                 v-if="lesson.initialQuiz && lesson.initialQuiz.id"
+                :color="timelineColor(!initialTestSolution)"
                 small
             >
               <div>
@@ -49,6 +50,7 @@
 
             <v-timeline-item
                 small
+                :color="timelineColor(lessonProgress && !lessonProgress.AllPartsRead)"
                 v-if="lesson.parts && lesson.parts.length>0"
             >
               <div>
@@ -68,6 +70,7 @@
 
             <v-timeline-item
                 small
+                :color="timelineColor((lessonProgress && lessonProgress.AllPartsRead || lesson.parts.length===0) && !finalTestSolution)"
                 v-if="lesson.finalQuiz && lesson.finalQuiz.id"
             >
               <div>
@@ -104,6 +107,19 @@
                 <div></div>
               </div>
             </v-timeline-item>
+            <v-timeline-item
+                small
+                color="green"
+                v-if="finalTestSolution"
+            >
+              <div>
+                <div class="font-weight-normal">
+                  <strong class="done">{{ $t('Done!') }}</strong>
+                </div>
+                <div></div>
+              </div>
+            </v-timeline-item>
+
           </v-timeline>
         </v-card-text>
         <v-card-actions>
@@ -129,7 +145,15 @@
               v-if="showReview()"
               v-on:click="reviewLesson()"
           >
-            {{ $t('Review') }}
+            {{ $t('Review Lesson') }}
+          </v-btn>
+          <v-btn
+              text
+              color="teal accent-4"
+              v-if="showSeeResults()"
+              v-on:click="seeResults()"
+          >
+            {{ $t('Results') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -246,6 +270,13 @@ export default class LessonMainMenu extends Vue {
     this.$router.push({name: 'LessonPart', params: {quizId: (this.lesson as Lesson).id}})
   }
 
+  showSeeResults(){
+    return (this.finalTestSolution)
+  }
+  public seeResults() {
+    this.$router.push({name: 'LessonResults', params: {quizId: (this.lesson as Lesson).id}})
+  }
+
   async created() {
     this.lesson = await getLesson(this.$route.params.lessonId) as Lesson
     console.log(this.lesson)
@@ -255,5 +286,19 @@ export default class LessonMainMenu extends Vue {
     this.$forceUpdate()
   }
 
+  timelineColor(active: boolean){
+    if (active === true) {
+      return 'green'
+    } else {
+      return 'blue'
+    }
+  }
+
 }
 </script>
+
+<style>
+.done{
+  color:green;
+}
+</style>

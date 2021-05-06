@@ -1,4 +1,4 @@
-import {isEqual} from 'lodash'
+import {isEqual, difference} from 'lodash'
 import {LessonResults, QuizResults} from "@/models/QuizResults";
 import {ChosenAnswerMultichoice, QuizUserSolution} from "@/models/QuizUserSolution";
 import {Quiz} from "@/models/Quiz";
@@ -32,7 +32,7 @@ export const evaluateQuiz = (quiz: Quiz, solution: QuizUserSolution): QuizResult
         const index = answ.questionIndex
         const responses = (answ as ChosenAnswerMultichoice).selectedOptions
         const correctResponsesForAnsw = quiz.questions[index].correctAnswers
-        const isCorrectAns = isEqual(responses, correctResponsesForAnsw)
+        const isCorrectAns = difference(responses, correctResponsesForAnsw).length === 0
 
         if (responses.length > 0 && isCorrectAns) {
             quizResult.correctAnswers.push(index)
@@ -52,7 +52,7 @@ export const evaluateQuiz = (quiz: Quiz, solution: QuizUserSolution): QuizResult
 
 
 export const evaluateLesson = (lesson: Lesson, solutionInitialTest: QuizResults, solutionFinalTest: QuizResults): LessonResults => {
-    if (!lesson || !solutionFinalTest.score) {
+    if (!lesson || !solutionFinalTest.id) {
         return {} as LessonResults
     }
     const lessonResult = {} as LessonResults

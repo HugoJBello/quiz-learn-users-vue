@@ -151,6 +151,7 @@ export default class LessonResultsMenu extends Vue {
 
   async evaluateResults() {
     this.lessonResults = evaluateLesson(this.lesson as Lesson, this.quizInitialResults, this.quizFinalResults)
+    console.log(this.lessonResults)
     if (this.lessonResults) await saveLessonResults(this.lessonResults)
   }
 

@@ -12,6 +12,7 @@ export interface LessonsProgress {
     globalStatus: LectionStatus,
     percentDone: number,
     lastPart: number,
+    AllPartsRead: boolean,
     initialQuizProgress: QuizStatus,
     finalQuizProgress: QuizStatus,
     userId: string,

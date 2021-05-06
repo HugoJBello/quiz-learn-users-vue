@@ -70,7 +70,7 @@ import {Component, Vue} from 'vue-property-decorator';
 import {Lesson, Part} from "@/models/Lessons";
 import {getLesson} from "@/services/dbService";
 import {Quiz} from "@/models/Quiz";
-import {setLessonPartStarted} from "@/services/progressService";
+import {setLessonPartEnd, setLessonPartStarted} from "@/services/progressService";
 
 @Component({
   components: {},
@@ -116,7 +116,7 @@ export default class LessonPart extends Vue {
 
   async continueLesson() {
     const finalQuizId = (this.lesson as Lesson).finalQuiz.id
-    await setLessonPartStarted((this.lesson as Lesson).id, this.user.uid, this.partIndex-1)
+    await setLessonPartEnd((this.lesson as Lesson).id, this.user.uid, this.partIndex-1)
     if (finalQuizId) {
       await this.$router.push({name: 'QuizEntry', params: {quizId: finalQuizId}})
     }

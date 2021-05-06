@@ -132,6 +132,15 @@
         {{ $t('Start lesson') }}
         <v-icon>mdi-chevron-double-right</v-icon>
       </v-btn>
+      <v-btn
+          text
+          color="teal accent-4"
+          v-if="quiz.type === 'FINAL'"
+          v-on:click="lessonResults()"
+      >
+        {{ $t('Lesson Results') }}
+        <v-icon>mdi-chevron-double-right</v-icon>
+      </v-btn>
     </div>
 
   </v-container>
@@ -207,6 +216,10 @@ export default class QuizResultsMenu extends Vue {
   async continueLesson() {
     this.$router.push({name: 'LessonPart', params: {lessonId: (this.quiz as Quiz).lessonId}})
 
+  }
+
+  async lessonResults () {
+    this.$router.push({name: 'LessonResults', params: {lessonId: (this.quiz as Quiz).lessonId}})
   }
 
   async lessonMenu() {

@@ -43,7 +43,18 @@ export const setLessonPartStarted = async (lessonId: string, userId: string, par
     existingProgress.percentDone = Math.max(existingProgress.percentDone || 0, 50)
 
     return await saveLessonProgress(existingProgress)
+}
 
+export const setLessonPartEnd = async (lessonId: string, userId: string, part: number) => {
+    let existingProgress = await getLessonProgress(lessonId, userId)
+    if (!existingProgress || !existingProgress.id) {
+        existingProgress = createNewLessonProgress(lessonId, userId)
+    }
+    existingProgress.lastPart = part
+    existingProgress.percentDone = 100
+    existingProgress.AllPartsRead = true
+
+    return await saveLessonProgress(existingProgress)
 }
 
 export const setFinalQuizAsFinished = async (lessonId: string, userId: string) => {
