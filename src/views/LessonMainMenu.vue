@@ -32,13 +32,12 @@
                 :color="timelineColor(!initialTestSolution)"
                 small
             >
-              <div>
+              <div v-on:click="initalQuizClick()">
                 <div class="font-weight-normal">
                   <strong>{{ $t("Initial test") }}:</strong> {{ $t('see how much you already know') }}
                   <v-btn
                       text
                       color="teal accent-4"
-                      v-on:click="initalQuizClick()"
                   >
                     <v-icon>mdi-chevron-double-right</v-icon>
                   </v-btn>
@@ -53,14 +52,12 @@
                 :color="timelineColor(lessonProgress && !lessonProgress.AllPartsRead)"
                 v-if="lesson.parts && lesson.parts.length>0"
             >
-              <div>
+              <div v-on:click="goToLesson()">
                 <div class="font-weight-normal">
                   <strong>{{ $t('Explanation') }}:</strong> {{ $t('see how it is done') }}
                   <v-btn
                       text
-                      color="teal accent-4"
-                      v-on:click="goToLesson()"
-                  >
+                      color="teal accent-4">
                     <v-icon>mdi-chevron-double-right</v-icon>
                   </v-btn>
                 </div>
@@ -70,16 +67,15 @@
 
             <v-timeline-item
                 small
-                :color="timelineColor((lessonProgress && lessonProgress.AllPartsRead || lesson.parts.length===0) && !finalTestSolution)"
+                :color="timelineColor(isFinalTestActive())"
                 v-if="lesson.finalQuiz && lesson.finalQuiz.id"
             >
-              <div>
+              <div v-on:click="finalQuizClick()">
                 <div class="font-weight-normal">
                   <strong>{{ $t('Test') }}:</strong> {{ $t('see how much you picked up') }}
                   <v-btn
                       text
                       color="teal accent-4"
-                      v-on:click="finalQuizClick()"
                   >
                     <v-icon>mdi-chevron-double-right</v-icon>
                   </v-btn>
@@ -92,14 +88,13 @@
                 small
                 v-if="lesson.finalQuiz && lesson.finalQuiz.id"
             >
-              <div>
+              <div v-on:click="resultsClick()">
                 <div class="font-weight-normal">
                   <strong>{{ $t('Results') }}:</strong> {{ $t('how did you do') }}
                   <v-btn
                       text
                       color="teal accent-4"
                       v-if="finalTestSolution"
-                      v-on:click="resultsClick()"
                   >
                     <v-icon>mdi-chevron-double-right</v-icon>
                   </v-btn>
@@ -192,6 +187,10 @@ export default class LessonMainMenu extends Vue {
   }
 
   public initalQuizClick() {
+    if (!((this.lesson as Lesson).initialQuiz && (this.lesson as Lesson).initialQuiz.id)) {
+      return
+    }
+
     if (this.initialTestSolution && this.initialTestSolution.completed) {
       console.log(this.initialTestSolution.completed)
       this.$router.push({name: 'QuizResults', params: {quizId: (this.lesson as Lesson).initialQuiz.id}})
@@ -207,6 +206,7 @@ export default class LessonMainMenu extends Vue {
       this.$router.push({name: 'QuizEntry', params: {quizId: (this.lesson as Lesson).finalQuiz.id}})
     }
   }
+
   public resultsClick() {
     if (this.finalTestSolution && this.finalTestSolution.completed) {
       this.$router.push({name: 'LessonResults', params: {quizId: (this.lesson as Lesson).id}})
@@ -255,24 +255,25 @@ export default class LessonMainMenu extends Vue {
   }
 
   public continueLesson() {
-    if (this.lesson?.parts && this.lesson.parts.length> 0) {
+    if (this.lesson?.parts && this.lesson.parts.length > 0) {
       this.$router.push({name: 'LessonPart', params: {quizId: (this.lesson as Lesson).id}})
-    } else if ((this.lesson as Lesson).finalQuiz.id){
+    } else if ((this.lesson as Lesson).finalQuiz.id) {
       this.$router.push({name: 'QuizEntry', params: {quizId: (this.lesson as Lesson).finalQuiz.id}})
     }
   }
 
   public showReview() {
-    return (this.finalTestSolution && this.lesson?.parts && this.lesson.parts.length>0)
+    return (this.finalTestSolution && this.lesson?.parts && this.lesson.parts.length > 0)
   }
 
   public reviewLesson() {
     this.$router.push({name: 'LessonPart', params: {quizId: (this.lesson as Lesson).id}})
   }
 
-  showSeeResults(){
+  showSeeResults() {
     return (this.finalTestSolution)
   }
+
   public seeResults() {
     this.$router.push({name: 'LessonResults', params: {quizId: (this.lesson as Lesson).id}})
   }
@@ -286,7 +287,22 @@ export default class LessonMainMenu extends Vue {
     this.$forceUpdate()
   }
 
-  timelineColor(active: boolean){
+  isFinalTestActive(){
+    if (this.finalTestSolution) return false
+
+    if (this.lessonProgress && this.lessonProgress.AllPartsRead) {
+      return true
+    }
+
+    if (this.lesson?.initialQuiz.id && this.initialTestSolution && this.lesson.parts.length==0){
+      return true
+    }
+
+    return false
+
+  }
+
+  timelineColor(active: boolean) {
     if (active === true) {
       return 'green'
     } else {
@@ -298,7 +314,7 @@ export default class LessonMainMenu extends Vue {
 </script>
 
 <style>
-.done{
-  color:green;
+.done {
+  color: green;
 }
 </style>

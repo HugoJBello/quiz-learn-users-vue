@@ -40,8 +40,8 @@
                                    class="image">
               <v-img
                   lazy-src="https://picsum.photos/id/11/10/6"
-                  max-height="150"
-                  max-width="150"
+                  max-height="300"
+                  max-width="300"
                   style="margin: 0 auto"
                   :src="question.answerImages[answer]"
               ></v-img>

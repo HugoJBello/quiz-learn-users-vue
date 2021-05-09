@@ -148,18 +148,13 @@
 
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator';
-import {getQuiz, getUserSolutions, saveQuizResults} from "@/services/dbService";
-import {Quiz} from "@/models/Quiz";
+import {getLesson, getQuiz, getUserSolutions, saveQuizResults} from "@/services/dbService";
+import {Quiz, QuizType} from "@/models/Quiz";
 import {ChosenAnswerMultichoice, QuizUserSolution} from "@/models/QuizUserSolution";
 import {QuizResults} from "@/models/QuizResults";
 import {evaluateQuiz} from "@/services/evaluationService";
-import {QuizType} from '@/models/Quiz';
-import {
-  setFinalQuizAsFinished,
-  setFinalQuizAsStarted,
-  setInitialQuizAsFinished,
-  setInitialQuizAsStarted
-} from "@/services/progressService";
+import {setFinalQuizAsFinished, setInitialQuizAsFinished} from "@/services/progressService";
+import {Lesson} from "@/models/Lessons";
 
 @Component({
   components: {},
@@ -168,6 +163,7 @@ export default class QuizResultsMenu extends Vue {
   public quiz: Quiz | undefined
   public quizUserSolution: QuizUserSolution
   public quizResults: QuizResults
+  public lesson: Lesson
 
   get user() {
     return this.$store.state.user
@@ -214,8 +210,11 @@ export default class QuizResultsMenu extends Vue {
   }
 
   async continueLesson() {
-    this.$router.push({name: 'LessonPart', params: {lessonId: (this.quiz as Quiz).lessonId}})
-
+    if (this.lesson.parts && this.lesson.parts.length>0) {
+      this.$router.push({name: 'LessonPart', params: {lessonId: (this.quiz as Quiz).lessonId}})
+    } else if (this.lesson.finalQuiz && this.lesson.finalQuiz.id) {
+      this.$router.push({name: 'QuizEntry', params: {quizId: (this.lesson as Lesson).finalQuiz.id}})
+    }
   }
 
   async lessonResults () {
@@ -230,6 +229,8 @@ export default class QuizResultsMenu extends Vue {
 
   async created() {
     this.quiz = await getQuiz(this.$route.params.quizId) as Quiz
+    this.lesson = await getLesson(this.quiz.lessonId) as Lesson
+
     await this.getPreviousSolution(this.$route.params.quizId)
     await this.evaluateResults()
     if ((this.quiz as Quiz).type === QuizType.INITIAL) {
